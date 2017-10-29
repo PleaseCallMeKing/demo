@@ -24,7 +24,7 @@ public class City {
 
     @NotNull
     @Column(name = "city_area")
-    private Float cityArea;
+    private Double cityArea;
 
     @NotNull
     @Column(name = "city_province")
@@ -38,12 +38,12 @@ public class City {
         this.cityName = cityName;
     }
 
-    public City(String cityName, Float cityArea) {
+    public City(String cityName, Double cityArea) {
         this.cityName = cityName;
         this.cityArea = cityArea;
     }
 
-    public City(String cityName, Float cityArea, String province) {
+    public City(String cityName, Double cityArea, String province) {
         this.cityName = cityName;
         this.cityArea = cityArea;
         this.province = province;
@@ -65,11 +65,11 @@ public class City {
         this.cityName = cityName;
     }
 
-    public Float getCityArea() {
+    public Double getCityArea() {
         return cityArea;
     }
 
-    public void setCityArea(Float cityArea) {
+    public void setCityArea(Double cityArea) {
         this.cityArea = cityArea;
     }
 

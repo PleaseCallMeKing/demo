@@ -4,7 +4,22 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-<p>Get your greeting <a href="/greeting">here</a></p>
+<p>Get your greeting <a href="/greeting?name=Carl">here</a></p>
+<form method="post" action="/uploadExcel"  enctype="multipart/form-data" style="align: center">
+    <table width="40%" border="1px" cellspacing="0" cellpadding="3" >
+        <tr>
+            <td align="center"><h6>选择Excel表：</h6></td>
+            <td align="center">
+                <div>
+                    <input type="file" name="file"  />
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td align="center"><input type="submit" name="submit" value="上传" /></td>
+        </tr>
+    </table>
+</form>
 </body>
 <body>
 

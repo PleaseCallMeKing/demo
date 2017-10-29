@@ -17,7 +17,7 @@ public class DemoApplicationTests {
 
 		city.setCityId((long) 3);
 		city.setCityName("Beijing");
-		city.setCityArea((float) 233);
+		city.setCityArea((double) 233);
 		city.setProvince("Beijing Province");
 
 		GeneratorXls xls=new GeneratorXls();
