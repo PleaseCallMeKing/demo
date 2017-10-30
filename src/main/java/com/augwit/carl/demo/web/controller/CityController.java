@@ -3,9 +3,13 @@ package com.augwit.carl.demo.web.controller;
 import com.augwit.carl.demo.domain.City;
 import com.augwit.carl.demo.persistence.CityRepository;
 import com.augwit.carl.demo.utils.GeneratorXls;
+import com.augwit.carl.demo.utils.UploadExcel;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author: Carl
@@ -30,69 +36,32 @@ public class CityController {
     private CityRepository cityRepository;
 
     @RequestMapping("/uploadExcel")
+    @ResponseBody
     public String uploadExcel(MultipartFile file){
-        try {
-            InputStream is=file.getInputStream();
-            HSSFWorkbook wb=new HSSFWorkbook(is);
-            HSSFSheet sheet =wb.getSheetAt(0);
+
+        HSSFSheet sheet=UploadExcel.getSheet(file);
+        UploadExcel uploadExcel=new UploadExcel(sheet);
+
             int rowNum=sheet.getPhysicalNumberOfRows();
 
-            ArrayList<Long> ids=new ArrayList<>();
-            ArrayList<String> names=new ArrayList<>();
-            ArrayList<Double> areas=new ArrayList<>();
-            ArrayList<String> provinces=new ArrayList<>();
-            for(int i=0;i<rowNum;i++) {
+            for(int i=1;i<rowNum;i++) {
+
                 City city=new City();
 
-                System.out.println( sheet.getRow(i).getCell(0).getNumericCellValue());
+                Double idDouble=uploadExcel.getCell(i,0).getNumericCellValue();
+                city.setCityId(idDouble.longValue());
 
-                Double idDouble=sheet.getRow(i).getCell(0).getNumericCellValue();
-                Long idLong=idDouble.longValue();
-               //ids.set( i,idLong);
-                city.setCityId(idLong);
+                city.setCityName(uploadExcel.getCell(i,1).getStringCellValue());
 
-               // names.set(i,sheet.getRow(i).getCell(1).getStringCellValue()) ;
-                city.setCityName(sheet.getRow(i).getCell(1).getStringCellValue());
+                city.setCityArea(uploadExcel.getCell(i,2).getNumericCellValue());
 
-             //   areas.set(i,  sheet.getRow(i).getCell(2).getNumericCellValue()) ;
-                city.setCityArea(sheet.getRow(i).getCell(2).getNumericCellValue());
+                city.setProvince(uploadExcel.getCell(i,3).getStringCellValue());
 
-             //   provinces.set(i,sheet.getRow(i).getCell(3).getStringCellValue()) ;
-                city.setProvince(sheet.getRow(i).getCell(3).getStringCellValue());
+                city.setPostalCode(uploadExcel.getCell(i,4).getStringCellValue());
 
                 cityRepository.save(city);
             }
-            //System.out.println(ids.get(0));
-            for (int j=0;j<ids.size();j++){
-                City city=new City();
-                //city.setCityId(ids.get(j));
-                city.setCityName(names.get(j));
-                city.setCityArea(areas.get(j));
-                city.setProvince(provinces.get(j));
-                cityRepository.save(city);
-            }
-
-
-           /* Map<Integer, String> map = new HashMap();
-            for (int i = 0; i < rowNum; i++) {
-                Row row=sheet.getRow(i);
-                int colNum=row.getPhysicalNumberOfCells();
-                for (int j = 0; j < colNum; j++) {
-                    Cell cell=row.getCell(j);
-                    map.put(j,cell.getStringCellValue());
-                }
-                city=new City();
-                city.setCityId(Long.valueOf(map.get(0)));
-                city.setCityName(map.get(1));
-                city.setCityArea(Float.valueOf(map.get(2)));
-                city.setProvince(map.get(3));
-                cityRepository.save(city);
-            }
-            System.out.println(map.toString());*/
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "greeting";
+        return "Success Uploaded !";
     }
 
     @RequestMapping("/greeting")

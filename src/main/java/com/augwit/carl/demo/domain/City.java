@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 public class City {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "city_id")
     private Long cityId;
 
@@ -29,6 +29,10 @@ public class City {
     @NotNull
     @Column(name = "city_province")
     private String province;
+
+    @NotNull
+    @Column(name = "postal_code")
+    private String postalCode;
 
     public City() {
     }
@@ -81,6 +85,14 @@ public class City {
         this.province = province;
     }
 
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -91,6 +103,7 @@ public class City {
         if (cityId != null ? !cityId.equals(city.cityId) : city.cityId != null) return false;
         if (cityName != null ? !cityName.equals(city.cityName) : city.cityName != null) return false;
         if (cityArea != null ? !cityArea.equals(city.cityArea) : city.cityArea != null) return false;
+        if (postalCode != null ? !postalCode.equals(city.postalCode) : city.postalCode !=null) return false;
         return province != null ? province.equals(city.province) : city.province == null;
     }
 
@@ -100,6 +113,7 @@ public class City {
         result = 31 * result + (cityName != null ? cityName.hashCode() : 0);
         result = 31 * result + (cityArea != null ? cityArea.hashCode() : 0);
         result = 31 * result + (province != null ? province.hashCode() : 0);
+        result = 31 * result + (postalCode != null ? postalCode.hashCode() : 0);
         return result;
     }
 
@@ -110,6 +124,7 @@ public class City {
                 ", cityName='" + cityName + '\'' +
                 ", cityArea=" + cityArea +
                 ", province='" + province + '\'' +
+                ", postalCode='" + postalCode + '\'' +
                 '}';
     }
 }

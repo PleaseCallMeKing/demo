@@ -21,14 +21,9 @@ public class GeneratorXls {
     private HSSFCellStyle style=wb.createCellStyle();
     private HSSFFont font=wb.createFont();
 
-    private String filePath;
-    private String tempFilePath;
-
-
     public  void  createXls(City city){
 
         arrangeRow0();
-
 
         font.setFontHeightInPoints((short) 10);
         font.setBold(true);

@@ -1,4 +1,4 @@
-package com.augwit.carl.demo.server;
+package com.augwit.carl.demo.services;
 
 import org.springframework.stereotype.Service;
 
