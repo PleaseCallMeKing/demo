@@ -38,6 +38,9 @@ public class UploadExcel {
     public Object getCellValue(int rowNum,int colNum){
 
         HSSFRow row=s.getRow(rowNum);
+        if(row==null){
+            row=s.createRow(rowNum);
+        }
         HSSFCell cell=row.getCell(colNum);
 
         if(cell==null){

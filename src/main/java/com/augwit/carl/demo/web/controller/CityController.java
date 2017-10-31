@@ -46,17 +46,40 @@ public class CityController {
         int rowNum=sheet.getPhysicalNumberOfRows();
         int cellNum=sheet.getRow(0).getLastCellNum();
 
+        //1.把标题值获得 2.把值对应为一个有顺序的数组 3.city中装入对应好顺序的数组。
+        //建立一个有序的数组
+        ArrayList<String> orderedTitle=new ArrayList<>();
+        orderedTitle.add(0,"城市id");
+        orderedTitle.add(1,"城市名称");
+        orderedTitle.add(2,"城市面积");
+        orderedTitle.add(3,"所属省份");
+        orderedTitle.add(4,"邮编");
+        ArrayList<String> titles=new ArrayList<>();
+        for(int z=0;z<cellNum;z++){
+            String title= (String) uploadExcel.getCellValue(0,z);
+            titles.add(title);
+        }
+        for(int j=0;j<orderedTitle.size();j++){
+            int n=titles.indexOf(orderedTitle.get(j));
+            if(n!=j){
+                Collections.swap(orderedTitle,j,n);
+            }
+        }
+
+        //通过Excel标题获得所在列号，然后把列号赋给Map中对应于数据库表的名称的Value，Map(名称,对应列号)
+        //在city获得值时根据Map的列号获得值。
+
         for(int i=1;i<rowNum;i++) {
             City city=new City();
             List<Object> list=new ArrayList<>();
             for(int j=0;j<cellNum;j++){
                 list.add(uploadExcel.getCellValue(i,j));
             }
-            city.setCityId(((Double) list.get(0)).longValue());
-            city.setCityName((String) list.get(1));
-            city.setCityArea((Double) list.get(2));
-            city.setProvince((String) list.get(3));
-            city.setPostalCode((String) list.get(4));
+            city.setCityId(((Double) list.get(orderedTitle.indexOf("城市id"))).longValue());
+            city.setCityName((String) list.get(orderedTitle.indexOf("城市名称")));
+            city.setCityArea((Double) list.get(orderedTitle.indexOf("城市面积")));
+            city.setProvince((String) list.get(orderedTitle.indexOf("所属省份")));
+            city.setPostalCode((String) list.get(orderedTitle.indexOf("邮编")));
             cityRepository.save(city);
             }
         return "Success Uploaded !";
