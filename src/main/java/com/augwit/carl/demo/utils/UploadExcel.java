@@ -1,8 +1,7 @@
 package com.augwit.carl.demo.utils;
 
-        import org.apache.poi.hssf.usermodel.HSSFCell;
-        import org.apache.poi.hssf.usermodel.HSSFSheet;
-        import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+        import org.apache.poi.hssf.usermodel.*;
+        import org.apache.poi.ss.usermodel.CellType;
         import org.springframework.web.multipart.MultipartFile;
 
         import java.io.IOException;
@@ -17,8 +16,6 @@ package com.augwit.carl.demo.utils;
  */
 public class UploadExcel {
 
-    //  CellReference reference=new CellReference();
-
     private HSSFSheet s;
 
     public UploadExcel(HSSFSheet s) {
@@ -30,7 +27,6 @@ public class UploadExcel {
         try {
             InputStream is= file.getInputStream();
             HSSFWorkbook wb=new HSSFWorkbook(is);
-            //wb.getActiveSheetIndex();
             sheet =wb.getSheetAt(0);
             return sheet;
         } catch (IOException e) {
@@ -39,13 +35,44 @@ public class UploadExcel {
         return sheet;
     }
 
-    public HSSFCell getCell(int rowNum,int colNum){
-        HSSFCell cell=s.getRow(rowNum).getCell(colNum);
-        if(cell != null||cell.equals("")){
-            return cell;
-        }else {
+    public Object getCellValue(int rowNum,int colNum){
 
+        HSSFRow row=s.getRow(rowNum);
+        HSSFCell cell=row.getCell(colNum);
+
+        if(cell==null){
+            cell=row.createCell(colNum);
+            cell.setCellValue("null value");
         }
-        return cell;
+
+        Object cellValue = "";
+        CellType cellType = cell.getCellTypeEnum();
+        switch (cellType) {
+            case STRING:
+                cellValue = cell.getStringCellValue();
+                break;
+            case NUMERIC:
+                cellValue = cell.getNumericCellValue();
+                break;
+            case BLANK:
+                cellValue = "null blank";
+                break;
+            case _NONE:
+                cellValue = "none";
+                break;
+            case ERROR:
+                cellValue="error value";
+                break;
+            case BOOLEAN:
+                cellValue=cell.getBooleanCellValue();
+                break;
+            case FORMULA:
+                cellValue=cell.getCellFormula();
+                break;
+            default:
+                cellValue="未填写";
+                break;
+        }
+        return cellValue;
     }
 }

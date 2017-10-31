@@ -47,7 +47,7 @@ public class City {
         this.cityArea = cityArea;
     }
 
-    public City(String cityName, Double cityArea, String province) {
+    public City(String cityName, Double cityArea, String province,String postalCode) {
         this.cityName = cityName;
         this.cityArea = cityArea;
         this.province = province;

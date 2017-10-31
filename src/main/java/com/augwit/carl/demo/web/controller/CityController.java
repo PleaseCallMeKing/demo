@@ -13,6 +13,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,9 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author: Carl
@@ -42,24 +43,21 @@ public class CityController {
         HSSFSheet sheet=UploadExcel.getSheet(file);
         UploadExcel uploadExcel=new UploadExcel(sheet);
 
-            int rowNum=sheet.getPhysicalNumberOfRows();
+        int rowNum=sheet.getPhysicalNumberOfRows();
+        int cellNum=sheet.getRow(0).getLastCellNum();
 
-            for(int i=1;i<rowNum;i++) {
-
-                City city=new City();
-
-                Double idDouble=uploadExcel.getCell(i,0).getNumericCellValue();
-                city.setCityId(idDouble.longValue());
-
-                city.setCityName(uploadExcel.getCell(i,1).getStringCellValue());
-
-                city.setCityArea(uploadExcel.getCell(i,2).getNumericCellValue());
-
-                city.setProvince(uploadExcel.getCell(i,3).getStringCellValue());
-
-                city.setPostalCode(uploadExcel.getCell(i,4).getStringCellValue());
-
-                cityRepository.save(city);
+        for(int i=1;i<rowNum;i++) {
+            City city=new City();
+            List<Object> list=new ArrayList<>();
+            for(int j=0;j<cellNum;j++){
+                list.add(uploadExcel.getCellValue(i,j));
+            }
+            city.setCityId(((Double) list.get(0)).longValue());
+            city.setCityName((String) list.get(1));
+            city.setCityArea((Double) list.get(2));
+            city.setProvince((String) list.get(3));
+            city.setPostalCode((String) list.get(4));
+            cityRepository.save(city);
             }
         return "Success Uploaded !";
     }
@@ -70,22 +68,20 @@ public class CityController {
         return "greeting";
     }
 
-    @RequestMapping("/create")
-    @ResponseBody
-    public String create(String name,Double area,String province){
-        String cityId="";
-        try {
-            City city=new City(name,area,province);
-            cityRepository.save(city);
-            GeneratorXls xls=new GeneratorXls();
-            xls.createXls(city);
-            cityId=String.valueOf(city.getCityId());
+    @RequestMapping("/downloadExcel")
+    public String downloadExcel(City city){
 
+        return "downloadExcel";
+    }
+    @RequestMapping(value = "/create",params = {"createCity"})
+    @ResponseBody
+    public String create(@ModelAttribute(value = "city") City city){
+        try {
+            cityRepository.save(city);
         }catch (Exception ex){
             return "Error creating the city:"+ex.toString();
         }
-
-        return  "City succesfully created with id="+cityId;
+        return  "City succesfully created ";
     }
 
     @RequestMapping("/delete")
